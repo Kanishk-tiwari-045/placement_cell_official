@@ -1,5 +1,7 @@
 myvenv
+media/
 pcenv/
+*/migrations/*
 .env
 *.pyc
 __pycache__/

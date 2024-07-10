@@ -13,13 +13,6 @@ const Signup = ({ onClose, onRoleChange }) => {
   const [phone_number, setPhoneNumber] = useState('');
   const [isOrganization, setIsOrganization] = useState(false); // State for checkbox
 
-  const [signUpData, setSignUpData] = useState({
-    email: '',
-    password: '',
-    phone_number: '',
-    name: '',
-  });
-
   const handleSignInClick = () => {
     setIsRightPanelActive(false);
   };
@@ -27,6 +20,7 @@ const Signup = ({ onClose, onRoleChange }) => {
   const handleSignUpClick = () => {
     setIsRightPanelActive(true);
   };
+
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -36,7 +30,8 @@ const Signup = ({ onClose, onRoleChange }) => {
         password,
       });
       console.log('Sign In Success:', response.data);
-
+      console.log('AccessToken:', localStorage.getItem('token'));
+      localStorage.setItem('token', response.data.token);
       localStorage.setItem('userEmail', email);
 
       if (isOrganization) {
@@ -50,28 +45,26 @@ const Signup = ({ onClose, onRoleChange }) => {
       alert('Invalid credentials');
     }
   };
-  
-  // added now
+
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      console.log('Submitting Sign Up Data:', signUpData);
       const response = await axios.post('http://localhost:8000/api/v1/auth/signup/', {
-        email: signUpData.email,
-        password: signUpData.password,
-        phone_number: signUpData.phone_number,
-        name: signUpData.name,
+        email,
+        password,
+        phone_number,
+        name,
       });
-
+  
       console.log('Sign Up Success:', response.data);
       localStorage.setItem('userEmail', email);
-
+  
       if (isOrganization) {
         onRoleChange('Organisation');
       } else {
         onRoleChange('applicant');
       }
-      navigate('/');
+      navigate('/verify-otp'); // Redirect to OTP verification page
     } catch (error) {
       console.error('Sign Up Error:', error);
       if (error.response && error.response.status === 400) {
@@ -85,55 +78,6 @@ const Signup = ({ onClose, onRoleChange }) => {
       }
     }
   };
-
-  // const handleSignup = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     console.log('Submitting Sign Up Data:', signUpData);
-  //     const response = await axios.post('http://localhost:8000/api/v1/auth/signup/', signUpData);
-  //     alert("Sign up success")
-  //     console.log('Sign Up Success:', response.data);
-  //     if (response.status === 201) {
-  //       navigate('/signin');
-  //     } else {
-  //       console.error('Unexpected response status:', response.status);
-  //     }
-  //   } catch (error) {
-  //     console.error('Sign Up Error:', error);
-  //     if (error.response && error.response.status === 400) {
-  //       // Check if the error is due to duplicate entry (email already exists)
-  //       if (error.response.data.email) {
-  //         alert('User with this email already exists.');
-  //       } else {
-  //         alert('Signup functionality not implemented.');
-  //       }
-  //     } else {
-  //       alert('Signup functionality not implemented.');
-  //     }
-  //   }
-  // };
-
-  const handleSignUpChange = (e) => {
-    const { name, value } = e.target;
-    setSignUpData({
-      ...signUpData,
-      [name]: value,
-    });
-  };
-
-  // const handleForgotPassword = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post('http://localhost:8000/utils/password_reset/', {
-  //       email,
-  //     });
-  //     console.log('Password reset link sent:', response.data);
-  //     alert('Password reset link sent to your email!');
-  //   } catch (error) {
-  //     console.error('Forgot Password Error:', error);
-  //     alert('Failed to send reset link. Please try again.');
-  //   }
-  // };
 
   return (
     <div className={`container ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
@@ -150,42 +94,34 @@ const Signup = ({ onClose, onRoleChange }) => {
             style={{ borderRadius: '20px' }}
             type="email"
             placeholder="Email"
-            name="email"
-            value={signUpData.email}
-            onChange={handleSignUpChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             style={{ borderRadius: '20px' }}
             type="password"
             placeholder="Password"
-            name="password"
-            value={signUpData.password}
-            onChange={handleSignUpChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           <input
             style={{ borderRadius: '20px' }}
             type="text"
             placeholder="Full Name"
-            name="name"
-            value={signUpData.name}
-            onChange={handleSignUpChange}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
           <input
             style={{ borderRadius: '20px' }}
             type="text"
             placeholder="Phone Number"
-            name="phone_number"
-            value={signUpData.phone_number}
-            onChange={handleSignUpChange}
+            value={phone_number}
+            onChange={(e) => setPhoneNumber(e.target.value)}
             required
           />
-          {/* <button type="submit">Sign Up</button>
-        </form>
-      </div> */}
-      {/* added now */}
           <label className="wrap-check-64">
             <input
               type="checkbox"
@@ -196,10 +132,9 @@ const Signup = ({ onClose, onRoleChange }) => {
             <span className="slider round" style={{ marginTop: '10px', marginBottom: '17px' }}></span>
             <span className="checkbox-text" style={{ fontSize: '13px', fontWeight: 'bold', marginTop: '10px', marginBottom: '17px' }}>As Organization</span>
           </label>
-          <button type="button" onClick={handleSignup}>Sign Up</button>
+          <button type="submit">Sign Up</button>
         </form>
       </div>
-
 
       <div className="form-container sign-in-container">
         <form action="#" onSubmit={handleSignIn}>
@@ -216,6 +151,7 @@ const Signup = ({ onClose, onRoleChange }) => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             style={{ borderRadius: '20px' }}
@@ -223,6 +159,7 @@ const Signup = ({ onClose, onRoleChange }) => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <label className="wrap-check-64">
             <input
@@ -238,6 +175,7 @@ const Signup = ({ onClose, onRoleChange }) => {
           <button type="submit">Sign In</button>
         </form>
       </div>
+
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">
@@ -247,7 +185,7 @@ const Signup = ({ onClose, onRoleChange }) => {
           </div>
           <div className="overlay-panel overlay-right">
             <h1>Hello, Friend!</h1>
-            <p>Enter your personal details and start journey with us</p>
+            <p>Enter your personal details and start your journey with us</p>
             <button className="ghost" id="signUp" onClick={handleSignUpClick}>Sign Up</button>
           </div>
         </div>

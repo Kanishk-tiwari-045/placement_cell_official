@@ -28,7 +28,7 @@ class Organisation(models.Model):
     industry_type = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    email = models.EmailField(unique=True, null=False, default="admin@example.com")
+    email = models.EmailField(unique=True, null=True)
     email_verified = models.BooleanField(default=False)
     founded_date = models.DateField(blank=True, null=True)
     number_of_employees = models.IntegerField(blank=True, null=True)

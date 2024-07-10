@@ -197,7 +197,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend-react/build/static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend-react/build/static')]
 
 # AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 # AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
