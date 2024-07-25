@@ -58,7 +58,12 @@ class Job(models.Model):
     openings = models.PositiveIntegerField(default=1)
     custom_ques = models.JSONField(blank=True, null=True)
     perks_benefits = models.TextField(blank=True, null=True)
-    attachment_o = GenericRelation(Attachment)
+    attachment = GenericRelation(Attachment)
+
+    @property
+    def attachment_o(self):
+        return self.attachment.all()
+
 
     @property
     def attachment_o(self):
